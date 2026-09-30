@@ -2,7 +2,7 @@
 
 Minimal project overview for <https://christoph-jerolimov.github.io>, built with [Astro](https://astro.build) and TypeScript.
 
-The page lists projects that are published on GitHub Pages as a folder listing: path, title, description, a link to the site and to the repository, and when the repository was last touched (relative, e.g. *today* or *yesterday*).
+The page lists projects that are published on GitHub Pages: path, title, description, a link to the repository, and when the repository was last touched (relative, e.g. *today* or *yesterday*).
 
 ## Adding a project
 

@@ -45,26 +45,17 @@ export const projects: Project[] = [
   {
     name: 'backstage-change-monitor',
     title: 'Backstage Change Monitor',
-    description:
-      'Automatically maintained mirror and analysis of the Backstage package changelogs, release manifests and package versions.',
+    description: 'Daily mirror and analysis of the Backstage package changelogs and releases.',
   },
   {
     name: 'rhdh-change-monitor',
     title: 'RHDH Change Monitor',
-    description:
-      'Change monitor for Red Hat Developer Hub: maps each RHDH release to its Backstage release and tracks the package changes.',
-  },
-  {
-    name: 'loop',
-    title: 'loop',
-    description:
-      'Picks tickets from a backlog, runs an AI coding agent in a fresh checkout, opens a pull request and drives it until it is merged.',
+    description: 'The same for Red Hat Developer Hub, mapped to its Backstage releases.',
   },
   {
     name: 'floor-plan-dimensions',
     title: 'Floor Plan Dimensions',
-    description:
-      'Browser-only React app to measure floor plans from a picture: add known dimensions, measure lines and rectangles, place furniture.',
+    description: 'Measure floor plans from a picture in the browser.',
   },
 ];
 

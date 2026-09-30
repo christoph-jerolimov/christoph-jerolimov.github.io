@@ -12,54 +12,20 @@ const rows = resolved.map((project, index) => ({ project, info: infos[index] }))
 
 <Layout title={`${author.name} · Projects`} description={author.tagline}>
   <h1>Projects</h1>
-  <p class="muted">
-    Folders published under <code>{author.site}</code>. Each entry links to the site and its repository on GitHub.
-  </p>
 
-  <ul class="listing" aria-label="Project folders">
-    <li class="listing-header" aria-hidden="true">
-      <span>Path</span>
-      <span>Project</span>
-      <span class="right">Last touched</span>
-    </li>
+  <ul class="listing" aria-label="Projects">
     {rows.map(({ project, info }) => <ProjectRow project={project} lastTouched={info?.pushedAt} now={now} />)}
   </ul>
 </Layout>
 
 <style>
   h1 {
-    margin: 0 0 0.25rem;
+    margin: 0;
     font-size: 1.5rem;
-  }
-  h1 + p {
-    margin-top: 0;
   }
   .listing {
     list-style: none;
-    margin: 1.5rem 0 0;
+    margin: 0.5rem 0 0;
     padding: 0;
-    border-top: 1px solid var(--border);
-  }
-  .listing-header {
-    display: grid;
-    grid-template-columns: minmax(14rem, 1fr) 2fr auto;
-    gap: 0.5rem 1.5rem;
-    padding: 0.5rem 0.5rem;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--muted);
-  }
-  .right {
-    text-align: right;
-  }
-  @media (max-width: 40rem) {
-    .listing-header {
-      grid-template-columns: 1fr auto;
-    }
-    .listing-header span:nth-child(2) {
-      display: none;
-    }
   }
 </style>

@@ -26,15 +26,8 @@ const buildDate = new Date();
   <body>
     <header class="site-header">
       <div class="container">
-        <div class="brand">
-          <a class="brand-title" href="/">{author.site.replace(/^https?:\/\//, '')}</a>
-          <p class="brand-tagline">{author.tagline}</p>
-        </div>
-        <nav class="site-nav" aria-label="Author links">
-          <a href={githubUrl} rel="me">
-            <GitHubIcon /> @{author.github}
-          </a>
-        </nav>
+        <a class="brand-title" href="/">{author.name}</a>
+        <a href={githubUrl} rel="me"><GitHubIcon /> GitHub</a>
       </div>
     </header>
 
@@ -43,15 +36,9 @@ const buildDate = new Date();
     </main>
 
     <footer class="site-footer">
-      <div class="container">
-        <p>
-          Made by <a href={githubUrl} rel="me">{author.name}</a>.
-          Source on <a href={repoUrl}>GitHub</a>.
-        </p>
-        <p class="muted">
-          Built <time datetime={buildDate.toISOString()}>{buildDate.toISOString().slice(0, 10)}</time>{' '}
-          with <a href="https://astro.build">Astro</a> and deployed to GitHub Pages.
-        </p>
+      <div class="container muted">
+        <a href={repoUrl}>Source</a> · Built <time datetime={buildDate.toISOString()}>{buildDate.toISOString().slice(0, 10)}</time>{' '}
+        with <a href="https://astro.build">Astro</a>
       </div>
     </footer>
   </body>
@@ -136,33 +123,23 @@ const buildDate = new Date();
   }
   .site-header .container {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem 1.5rem;
+    gap: 1rem;
   }
-  .brand-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--fg);
-  }
-  .brand-tagline {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-  .site-nav a {
+  .site-header a {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
+  }
+  .brand-title {
+    font-weight: 600;
+    color: var(--fg);
   }
 
   .site-footer {
     border-top: 1px solid var(--border);
     padding-block: 1rem;
     font-size: 0.9rem;
-  }
-  .site-footer p {
-    margin: 0.25rem 0;
   }
 </style>

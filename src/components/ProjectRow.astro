@@ -1,7 +1,6 @@
 ---
 import type { ResolvedProject } from '../config';
 import { formatAbsoluteDate, formatRelativeDate } from '../lib/relative-time';
-import FolderIcon from './FolderIcon.astro';
 import GitHubIcon from './GitHubIcon.astro';
 
 interface Props {
@@ -15,87 +14,57 @@ const { project, lastTouched, now } = Astro.props;
 ---
 
 <li class="row">
-  <a class="folder" href={project.pagesUrl}>
-    <FolderIcon />
-    <code>{project.path}</code>
-  </a>
-  <div class="info">
+  <div class="heading">
+    <a class="path" href={project.pagesUrl}><code>{project.path}</code></a>
     <a class="title" href={project.pagesUrl}>{project.title}</a>
-    <p class="description">{project.description}</p>
-    <a class="repo" href={project.repoUrl}>
-      <GitHubIcon />
-      {project.owner}/{project.name}
-    </a>
   </div>
-  <div class="touched">
+  <p class="description">{project.description}</p>
+  <p class="meta">
+    <a class="repo" href={project.repoUrl}><GitHubIcon /> GitHub</a>
+    <span aria-hidden="true">·</span>
     {
       lastTouched ? (
         <time datetime={lastTouched.toISOString()} title={`Last push: ${formatAbsoluteDate(lastTouched)}`}>
           {formatRelativeDate(lastTouched, now)}
         </time>
       ) : (
-        <span class="muted" title="Last push date could not be fetched from GitHub">unknown</span>
+        <span title="Last push date could not be fetched from GitHub">unknown</span>
       )
     }
-  </div>
+  </p>
 </li>
 
 <style>
   .row {
-    display: grid;
-    grid-template-columns: minmax(14rem, 1fr) 2fr auto;
-    gap: 0.5rem 1.5rem;
-    align-items: start;
-    padding: 0.85rem 0.5rem;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--border);
   }
-  .row:hover {
-    background: var(--hover-bg);
+  .heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
   }
-  .folder {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+  .path {
     color: var(--fg);
-    font-weight: 500;
-  }
-  .folder .icon {
-    color: var(--accent);
-  }
-  .info {
-    min-width: 0;
-  }
-  .title {
     font-weight: 600;
   }
-  .description {
-    margin: 0.15rem 0 0.35rem;
+  .title {
     color: var(--muted);
-    font-size: 0.95rem;
+  }
+  .description {
+    margin: 0.25rem 0;
+  }
+  .meta {
+    margin: 0;
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--muted);
   }
   .repo {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-size: 0.875rem;
-    color: var(--muted);
-  }
-  .repo:hover {
-    color: var(--accent);
-  }
-  .touched {
-    white-space: nowrap;
-    color: var(--muted);
-    font-size: 0.9rem;
-    text-align: right;
-  }
-
-  @media (max-width: 40rem) {
-    .row {
-      grid-template-columns: 1fr auto;
-    }
-    .info {
-      grid-column: 1 / -1;
-    }
   }
 </style>
