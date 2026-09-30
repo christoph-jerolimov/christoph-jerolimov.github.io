@@ -10,22 +10,49 @@ const infos = await Promise.all(resolved.map((project) => fetchRepoInfo(project.
 const rows = resolved.map((project, index) => ({ project, info: infos[index] }));
 ---
 
-<Layout title={`${author.name} · Projects`} description={author.tagline}>
-  <h1>Projects</h1>
+<Layout title={`${author.name} · Repos with pages`} description={author.tagline}>
+  <h1><span class="prompt" aria-hidden="true">~ $</span> Repos with pages:</h1>
+  <p class="muted total" aria-hidden="true">total {rows.length}</p>
 
-  <ul class="listing" aria-label="Projects">
+  <ul class="listing" aria-label="Repos with pages">
     {rows.map(({ project, info }) => <ProjectRow project={project} lastTouched={info?.pushedAt} now={now} />)}
   </ul>
+
+  <p class="cursor" aria-hidden="true"><span class="prompt">~ $</span> <span class="blink">█</span></p>
 </Layout>
 
 <style>
   h1 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+  }
+  .prompt {
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .total {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
   }
   .listing {
     list-style: none;
     margin: 0.5rem 0 0;
     padding: 0;
+  }
+  .cursor {
+    margin: 1rem 0 0;
+  }
+  .blink {
+    animation: blink 1s steps(2, start) infinite;
+  }
+  @keyframes blink {
+    to {
+      visibility: hidden;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blink {
+      animation: none;
+    }
   }
 </style>

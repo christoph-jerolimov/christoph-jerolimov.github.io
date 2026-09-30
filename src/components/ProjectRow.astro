@@ -15,13 +15,14 @@ const { project, lastTouched, now } = Astro.props;
 
 <li class="row">
   <div class="heading">
-    <a class="path" href={project.pagesUrl}><code>{project.path}</code></a>
+    <span class="mode" aria-hidden="true">drwxr-xr-x</span>
+    <a class="path" href={project.pagesUrl}>{project.path}</a>
     <a class="title" href={project.pagesUrl}>{project.title}</a>
   </div>
   <p class="description">{project.description}</p>
   <p class="meta">
     <a class="repo" href={project.repoUrl}><GitHubIcon /> GitHub</a>
-    <span aria-hidden="true">·</span>
+    <span aria-hidden="true">--</span>
     {
       lastTouched ? (
         <time datetime={lastTouched.toISOString()} title={`Last push: ${formatAbsoluteDate(lastTouched)}`}>
@@ -44,6 +45,9 @@ const { project, lastTouched, now } = Astro.props;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.25rem 0.75rem;
+  }
+  .mode {
+    color: var(--muted);
   }
   .path {
     color: var(--fg);
