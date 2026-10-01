@@ -37,7 +37,7 @@ const buildDate = new Date();
 
     <footer class="site-footer">
       <div class="container muted">
-        <span aria-hidden="true">#</span> <a href={repoUrl}>Source</a> -- built <time datetime={buildDate.toISOString()}>{buildDate.toISOString().slice(0, 10)}</time>{' '}
+        <a href={repoUrl}>Source</a> -- built <time datetime={buildDate.toISOString()}>{buildDate.toISOString().slice(0, 10)}</time>{' '}
         with <a href="https://astro.build">Astro</a>
       </div>
     </footer>

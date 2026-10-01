@@ -13,9 +13,8 @@ interface Props {
 const { project, lastTouched, now } = Astro.props;
 ---
 
-<li class="row">
+<li class="row" data-line data-type="agent" data-delay="150">
   <div class="heading">
-    <span class="mode" aria-hidden="true">drwxr-xr-x</span>
     <a class="path" href={project.pagesUrl}>{project.path}</a>
     <a class="title" href={project.pagesUrl}>{project.title}</a>
   </div>
@@ -37,17 +36,13 @@ const { project, lastTouched, now } = Astro.props;
 
 <style>
   .row {
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0;
   }
   .heading {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.25rem 0.75rem;
-  }
-  .mode {
-    color: var(--muted);
   }
   .path {
     color: var(--fg);
@@ -57,7 +52,7 @@ const { project, lastTouched, now } = Astro.props;
     color: var(--muted);
   }
   .description {
-    margin: 0.25rem 0;
+    margin: 0.15rem 0 !important;
   }
   .meta {
     margin: 0;

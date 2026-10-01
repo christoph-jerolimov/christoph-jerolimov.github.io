@@ -8,39 +8,180 @@ const now = new Date();
 const resolved = projects.map(resolveProject);
 const infos = await Promise.all(resolved.map((project) => fetchRepoInfo(project.owner, project.name)));
 const rows = resolved.map((project, index) => ({ project, info: infos[index] }));
+const fetched = infos.filter(Boolean).length;
+const prompt = 'Which of my repos have GitHub Pages, and when did I touch them last?';
 ---
 
 <Layout title={`${author.name} · Repos with pages`} description={author.tagline}>
-  <h1><span class="prompt" aria-hidden="true">~ $</span> Repos with pages:</h1>
-  <p class="muted total" aria-hidden="true">total {rows.length}</p>
+  <h1 class="visually-hidden">Repos with pages</h1>
 
-  <ul class="listing" aria-label="Repos with pages">
-    {rows.map(({ project, info }) => <ProjectRow project={project} lastTouched={info?.pushedAt} now={now} />)}
-  </ul>
+  <section class="session">
+    <p class="turn user" data-line data-type="user">
+      <span class="prefix" aria-hidden="true">&gt;</span> {prompt}
+    </p>
 
-  <p class="cursor" aria-hidden="true"><span class="prompt">~ $</span> <span class="blink">█</span></p>
+    <div class="tool" data-line data-delay="500">
+      <p><span class="dot" aria-hidden="true">●</span> Read(<code>src/config.ts</code>)</p>
+      <p class="result"><span aria-hidden="true">⎿</span> {rows.length} repos with pages</p>
+    </div>
+    <div class="tool" data-line data-delay="700">
+      <p><span class="dot" aria-hidden="true">●</span> Fetch(<code>api.github.com/repos/{author.github}/*</code>)</p>
+      <p class="result">
+        <span aria-hidden="true">⎿</span>
+        {fetched === rows.length ? `${fetched} × 200 OK` : `${fetched} of ${rows.length} fetched, the rest unknown`}
+      </p>
+    </div>
+
+    <p class="turn agent" data-line data-type="agent" data-delay="300">
+      <span class="dot" aria-hidden="true">●</span> Found {rows.length} repos with GitHub Pages:
+    </p>
+
+    <ul class="listing" aria-label="Repos with pages">
+      {rows.map(({ project, info }) => <ProjectRow project={project} lastTouched={info?.pushedAt} now={now} />)}
+    </ul>
+
+    <p class="turn agent" data-line data-type="agent" data-delay="200">
+      <span class="dot" aria-hidden="true">●</span> "Last touched" is the latest push to each repo. This page rebuilds daily.
+    </p>
+
+    <p class="turn user input" data-line data-delay="600" aria-hidden="true">
+      <span class="prefix">&gt;</span> <span class="blink">█</span>
+    </p>
+  </section>
 </Layout>
 
+<script>
+  const SPEED = { user: 32, agent: 10 } as const;
+  type Speaker = keyof typeof SPEED;
+
+  interface Step {
+    el: HTMLElement;
+    speaker: Speaker | null;
+    delay: number;
+    nodes: { node: Text; text: string }[];
+  }
+
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  function textNodes(el: HTMLElement): Text[] {
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes: Text[] = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+    return nodes;
+  }
+
+  async function type(step: Step) {
+    for (const { node, text } of step.nodes) {
+      if (!text.trim()) {
+        node.data = text;
+        continue;
+      }
+      const parent = node.parentElement;
+      parent?.classList.remove('untyped');
+      parent?.classList.add('caret');
+      for (let i = 1; i <= text.length; i++) {
+        node.data = text.slice(0, i);
+        await sleep(SPEED[step.speaker!]);
+      }
+      parent?.classList.remove('caret');
+    }
+  }
+
+  async function play(steps: Step[]) {
+    for (const step of steps) {
+      await sleep(step.delay);
+      step.el.classList.remove('pending');
+      if (step.speaker) await type(step);
+    }
+  }
+
+  function alreadyPlayed(): boolean {
+    try {
+      if (sessionStorage.getItem('played')) return true;
+      sessionStorage.setItem('played', '1');
+    } catch {
+      /* storage unavailable: play every time */
+    }
+    return false;
+  }
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lines = Array.from(document.querySelectorAll<HTMLElement>('[data-line]'));
+
+  if (!reduceMotion && !alreadyPlayed() && lines.length) {
+    const steps: Step[] = lines.map((el) => {
+      const speaker = (el.dataset.type as Speaker | undefined) ?? null;
+      const nodes = speaker ? textNodes(el).map((node) => ({ node, text: node.data })) : [];
+      return { el, speaker, delay: Number(el.dataset.delay ?? 0), nodes };
+    });
+    for (const step of steps) {
+      step.el.classList.add('pending');
+      for (const { node, text } of step.nodes) {
+        node.data = '';
+        if (text.trim()) node.parentElement?.classList.add('untyped');
+      }
+    }
+    play(steps);
+  }
+</script>
+
 <style>
-  h1 {
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .session {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .session p {
     margin: 0;
-    font-size: 1.25rem;
   }
-  .prompt {
+  :global(.pending) {
+    display: none !important;
+  }
+  :global(.untyped) {
+    visibility: hidden;
+  }
+  .prefix {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .user {
+    font-weight: 600;
+  }
+  .dot {
+    color: var(--accent);
+  }
+  .tool {
     color: var(--muted);
-    font-weight: 400;
-  }
-  .total {
-    margin: 0.25rem 0 0;
     font-size: 0.875rem;
+  }
+  .tool code {
+    color: var(--fg);
+  }
+  .result {
+    display: flex;
+    gap: 0.5rem;
+    padding-left: 1rem;
   }
   .listing {
     list-style: none;
-    margin: 0.5rem 0 0;
-    padding: 0;
+    margin: 0;
+    padding: 0 0 0 1rem;
   }
-  .cursor {
-    margin: 1rem 0 0;
+  .input {
+    margin-top: 0.5rem;
+  }
+  :global(.caret)::after {
+    content: '▍';
+    color: var(--accent);
+    margin-left: 1px;
   }
   .blink {
     animation: blink 1s steps(2, start) infinite;

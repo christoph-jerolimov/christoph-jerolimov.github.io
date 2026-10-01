@@ -2,7 +2,7 @@
 
 Minimal project overview for <https://christoph-jerolimov.github.io>, built with [Astro](https://astro.build) and TypeScript.
 
-The page lists projects that are published on GitHub Pages: path, title, description, a link to the repository, and when the repository was last touched (relative, e.g. *today* or *yesterday*).
+The page is styled like an AI coding agent session: a typed prompt, two tool calls, and a streamed answer listing the repos that are published on GitHub Pages with path, title, description, a link to the repository, and when the repository was last touched (relative, e.g. *today* or *yesterday*). The typing animation plays once per browser session and is skipped for `prefers-reduced-motion`; the full content is in the static HTML, so it also works without JavaScript.
 
 ## Adding a project
 
