@@ -31,8 +31,7 @@ export interface RepoData {
   repos: Repo[];
 }
 
-/** Folder path of a repo on this site, e.g. `/loop/`. */
+/** Path of a repo on this site without a trailing slash, e.g. `/loop`. */
 export function pagePath(repo: Repo): string {
-  const path = new URL(repo.homepage).pathname;
-  return path.endsWith('/') ? path : `${path}/`;
+  return new URL(repo.homepage).pathname.replace(/\/+$/, '');
 }

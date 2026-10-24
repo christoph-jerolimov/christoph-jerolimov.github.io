@@ -18,11 +18,9 @@ const pushedAt = new Date(repo.pushedAt);
     {repo.archived && <span class="tag">archived</span>}
     {repo.fork && <span class="tag">fork</span>}
   </p>
-  <p class="description">{repo.description ?? repo.name}</p>
+  {repo.description && <p class="description">{repo.description}</p>}
   <p class="meta">
     <a class="repo" href={repo.url}><GitHubIcon /> GitHub</a>
-    {repo.language && <span class="sep" aria-hidden="true">--</span>}
-    {repo.language && <span>{repo.language}</span>}
     {repo.stars > 0 && <span class="sep" aria-hidden="true">--</span>}
     {repo.stars > 0 && <span title={`${repo.stars} stargazers`}>★ {repo.stars}</span>}
     <span class="sep" aria-hidden="true">--</span>
