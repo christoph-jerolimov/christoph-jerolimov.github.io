@@ -1,14 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ProjectRow from '../components/ProjectRow.astro';
-import { author, projects, resolveProject } from '../config';
-import { fetchRepoInfo } from '../lib/github';
+import RepoRow from '../components/RepoRow.astro';
+import { author, pagesPrefix, reposDataFile } from '../config';
+import type { RepoData } from '../lib/repos';
+import reposJson from '../data/repos.json';
 
+const data = reposJson as RepoData;
 const now = new Date();
-const resolved = projects.map(resolveProject);
-const infos = await Promise.all(resolved.map((project) => fetchRepoInfo(project.owner, project.name)));
-const rows = resolved.map((project, index) => ({ project, info: infos[index] }));
-const fetched = infos.filter(Boolean).length;
+const fetchedAt = new Date(data.fetchedAt);
 const prompt = 'Which of my repos have GitHub Pages, and when did I touch them last?';
 ---
 
@@ -21,27 +20,30 @@ const prompt = 'Which of my repos have GitHub Pages, and when did I touch them l
     </p>
 
     <div class="tool" data-line data-delay="500">
-      <p><span class="dot" aria-hidden="true">●</span> Read(<code>src/config.ts</code>)</p>
-      <p class="result"><span aria-hidden="true">⎿</span> {rows.length} repos with pages</p>
-    </div>
-    <div class="tool" data-line data-delay="700">
-      <p><span class="dot" aria-hidden="true">●</span> Fetch(<code>api.github.com/repos/{author.github}/*</code>)</p>
+      <p><span class="dot" aria-hidden="true">●</span> Read(<code>{reposDataFile}</code>)</p>
       <p class="result">
         <span aria-hidden="true">⎿</span>
-        {fetched === rows.length ? `${fetched} × 200 OK` : `${fetched} of ${rows.length} fetched, the rest unknown`}
+        {data.totalRepos > 0 ? `${data.totalRepos} repos of ${data.owner}, ` : ''}fetched {fetchedAt.toISOString().slice(0, 10)} at deploy
       </p>
+    </div>
+    <div class="tool" data-line data-delay="700">
+      <p><span class="dot" aria-hidden="true">●</span> Grep(<code>homepage: {pagesPrefix}*</code>)</p>
+      <p class="result"><span aria-hidden="true">⎿</span> {data.repos.length} matches</p>
     </div>
 
     <p class="turn agent" data-line data-type="agent" data-delay="300">
-      <span class="dot" aria-hidden="true">●</span> Found {rows.length} repos with GitHub Pages:
+      <span class="dot" aria-hidden="true">●</span>{' '}
+      {data.repos.length === 0
+        ? 'None of the repos has a website under this origin yet. Set the Website field in a repository\u2019s settings and redeploy.'
+        : `Found ${data.repos.length} repos with GitHub Pages:`}
     </p>
 
     <ul class="listing" aria-label="Repos with pages">
-      {rows.map(({ project, info }) => <ProjectRow project={project} lastTouched={info?.pushedAt} now={now} />)}
+      {data.repos.map((repo) => <RepoRow repo={repo} now={now} />)}
     </ul>
 
     <p class="turn agent" data-line data-type="agent" data-delay="200">
-      <span class="dot" aria-hidden="true">●</span> "Last touched" is the latest push to each repo. This page rebuilds daily.
+      <span class="dot" aria-hidden="true">●</span> "Last touched" is the latest push to each repo. The list is refreshed on every deploy, at least daily.
     </p>
 
     <p class="turn user input" data-line data-delay="600" aria-hidden="true">

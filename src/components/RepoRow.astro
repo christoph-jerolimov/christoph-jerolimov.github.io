@@ -1,0 +1,74 @@
+---
+import { pagePath, type Repo } from '../lib/repos';
+import { formatAbsoluteDate, formatRelativeDate } from '../lib/relative-time';
+import GitHubIcon from './GitHubIcon.astro';
+
+interface Props {
+  repo: Repo;
+  now: Date;
+}
+
+const { repo, now } = Astro.props;
+const pushedAt = new Date(repo.pushedAt);
+---
+
+<li class="row" data-line data-type="agent" data-delay="150">
+  <p class="heading">
+    <a class="path" href={repo.homepage}>{pagePath(repo)}</a>
+    {repo.archived && <span class="tag">archived</span>}
+    {repo.fork && <span class="tag">fork</span>}
+  </p>
+  <p class="description">{repo.description ?? repo.name}</p>
+  <p class="meta">
+    <a class="repo" href={repo.url}><GitHubIcon /> GitHub</a>
+    {repo.language && <span class="sep" aria-hidden="true">--</span>}
+    {repo.language && <span>{repo.language}</span>}
+    {repo.stars > 0 && <span class="sep" aria-hidden="true">--</span>}
+    {repo.stars > 0 && <span title={`${repo.stars} stargazers`}>★ {repo.stars}</span>}
+    <span class="sep" aria-hidden="true">--</span>
+    <time datetime={repo.pushedAt} title={`Last push: ${formatAbsoluteDate(pushedAt)}`}>
+      {formatRelativeDate(pushedAt, now)}
+    </time>
+  </p>
+</li>
+
+<style>
+  .row {
+    padding: 0.5rem 0;
+  }
+  .row p {
+    margin: 0;
+  }
+  .heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+  }
+  .path {
+    color: var(--fg);
+    font-weight: 600;
+  }
+  .tag {
+    color: var(--muted);
+    font-size: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0 0.35rem;
+  }
+  .description {
+    margin: 0.15rem 0 !important;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .repo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+</style>

@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Project overview page for christoph-jerolimov.github.io",
   "scripts": {
+    "fetch-repos": "node scripts/fetch-repos.ts",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

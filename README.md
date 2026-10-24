@@ -4,34 +4,28 @@ Minimal project overview for <https://christoph-jerolimov.github.io>, built with
 
 The page is styled like an AI coding agent session: a typed prompt, two tool calls, and a streamed answer listing the repos that are published on GitHub Pages with path, title, description, a link to the repository, and when the repository was last touched (relative, e.g. *today* or *yesterday*). The typing animation plays once per browser session and is skipped for `prefers-reduced-motion`; the full content is in the static HTML, so it also works without JavaScript.
 
-## Adding a project
+## Which repositories are listed
 
-Edit [`src/config.ts`](src/config.ts) and append an entry to `projects`:
+No list is maintained by hand. When the site is deployed, [`scripts/fetch-repos.ts`](scripts/fetch-repos.ts) loads all repositories of the GitHub user from the GitHub API and keeps the ones whose **Website** (the `homepage` field in the repository settings) starts with `https://christoph-jerolimov.github.io/`. The result is written to [`src/data/repos.json`](src/data/repos.json), which the page imports, so the Astro build itself makes no network requests.
 
-```ts
-{
-  name: 'my-project',            // repo name; the site is expected at /my-project/
-  title: 'My Project',
-  description: 'What it does.',
-  // optional overrides: owner, pagesUrl, repoUrl
-}
-```
+To list a repository, set its Website to its GitHub Pages URL. The next deploy (push, daily schedule, or *Run workflow*) picks it up.
 
-The author information shown in the header and footer lives in the same file (`author`).
+The author information shown in the header and footer lives in [`src/config.ts`](src/config.ts).
 
 ## Development
 
 ```sh
 npm ci
-npm run dev      # local dev server
-npm run check    # type check
-npm run build    # static build into dist/
+npm run fetch-repos   # refresh src/data/repos.json (optional: GITHUB_TOKEN=... for a higher rate limit)
+npm run dev           # local dev server
+npm run check         # type check
+npm run build         # static build into dist/
 ```
 
-The "last touched" date is fetched from the GitHub REST API at build time (`pushed_at` of the repository). Set `GITHUB_TOKEN` to raise the rate limit; without network access the page still builds and shows *unknown*.
+The committed `src/data/repos.json` is only a snapshot so the site builds offline; the deploy workflow regenerates it.
 
 ## Deployment
 
-[`.github/workflows/pages.yml`](.github/workflows/pages.yml) builds and deploys the site to GitHub Pages on every push to `main`, once a day (so the relative dates stay fresh), and on demand via *Run workflow*.
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) fetches the repository list, builds the site and deploys it to GitHub Pages on every push to `main`, once a day (so the list and the relative dates stay fresh), and on demand via *Run workflow*.
 
 In the repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions**.

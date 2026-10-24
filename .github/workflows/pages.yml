@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  # Rebuild daily so the relative "last touched" dates stay current.
+  # Redeploy daily so the repository list and the relative dates stay current.
   schedule:
     - cron: '17 6 * * *'
   workflow_dispatch:
@@ -38,11 +38,14 @@ jobs:
       - name: Type check
         run: npm run check
 
+      - name: Fetch repositories with GitHub Pages
+        run: npm run fetch-repos
+        env:
+          # Raises the GitHub API rate limit for listing the repositories.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build
         run: npm run build
-        env:
-          # Raises the GitHub API rate limit for the "last touched" lookup.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
