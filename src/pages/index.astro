@@ -97,20 +97,10 @@ const prompt = 'Which of my repos have GitHub Pages, and when did I touch them l
     }
   }
 
-  function alreadyPlayed(): boolean {
-    try {
-      if (sessionStorage.getItem('played')) return true;
-      sessionStorage.setItem('played', '1');
-    } catch {
-      /* storage unavailable: play every time */
-    }
-    return false;
-  }
-
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const lines = Array.from(document.querySelectorAll<HTMLElement>('[data-line]'));
 
-  if (!reduceMotion && !alreadyPlayed() && lines.length) {
+  if (!reduceMotion && lines.length) {
     const steps: Step[] = lines.map((el) => {
       const speaker = (el.dataset.type as Speaker | undefined) ?? null;
       const nodes = speaker ? textNodes(el).map((node) => ({ node, text: node.data })) : [];
