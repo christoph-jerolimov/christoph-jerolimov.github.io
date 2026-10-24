@@ -6,7 +6,9 @@
   "description": "Project overview page for christoph-jerolimov.github.io",
   "scripts": {
     "fetch-repos": "node scripts/fetch-repos.ts",
+    "predev": "npm run fetch-repos",
     "dev": "astro dev",
+    "prebuild": "npm run fetch-repos",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check"

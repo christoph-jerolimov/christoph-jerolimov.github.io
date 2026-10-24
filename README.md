@@ -6,7 +6,7 @@ The page is styled like an AI coding agent session: a typed prompt, two tool cal
 
 ## Which repositories are listed
 
-No list is maintained by hand. When the site is deployed, [`scripts/fetch-repos.ts`](scripts/fetch-repos.ts) loads all repositories of the GitHub user from the GitHub API and keeps the ones whose **Website** (the `homepage` field in the repository settings) starts with `https://christoph-jerolimov.github.io/`. The result is written to [`src/data/repos.json`](src/data/repos.json), which the page imports, so the Astro build itself makes no network requests.
+No list is maintained by hand. When the site is deployed, [`scripts/fetch-repos.ts`](scripts/fetch-repos.ts) loads all repositories of the GitHub user from the GitHub API and keeps the ones whose **Website** (the `homepage` field in the repository settings) starts with `https://christoph-jerolimov.github.io/`. The result is written to `src/data/repos.json` (git-ignored), which the page imports, so the Astro build itself makes no network requests.
 
 To list a repository, set its Website to its GitHub Pages URL. The next deploy (push, daily schedule, or *Run workflow*) picks it up.
 
@@ -16,13 +16,12 @@ The author information shown in the header and footer lives in [`src/config.ts`]
 
 ```sh
 npm ci
-npm run fetch-repos   # refresh src/data/repos.json (optional: GITHUB_TOKEN=... for a higher rate limit)
-npm run dev           # local dev server
-npm run check         # type check
-npm run build         # static build into dist/
+npm run dev           # fetches the repos, then starts the dev server
+npm run check         # type check (needs src/data/repos.json, see below)
+npm run build         # fetches the repos, then builds into dist/
 ```
 
-The committed `src/data/repos.json` is only a snapshot so the site builds offline; the deploy workflow regenerates it.
+`npm run dev` and `npm run build` run `npm run fetch-repos` first, which writes `src/data/repos.json`. Run it on its own to refresh the data or before `npm run check`. Set `GITHUB_TOKEN` for a higher API rate limit; the unauthenticated limit is enough for normal use.
 
 ## Deployment
 

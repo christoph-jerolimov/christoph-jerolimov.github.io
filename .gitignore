@@ -1,5 +1,7 @@
 # build output
 dist/
+# generated at deploy time by scripts/fetch-repos.ts
+src/data/
 # generated types
 .astro/
 
